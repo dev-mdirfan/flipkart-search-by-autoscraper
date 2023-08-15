@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipKart | AutoScraper</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <div class="container px-xxl-5">
+            <a class="navbar-brand mb-0 h1 text-light" href="#">Flipkart</a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ">
+                    <a class="nav-link link-light active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link link-secondary" href="#">Features</a>
+                    <a class="nav-link link-secondary" href="#">Pricing</a>
+                </div>
+            </div>
+            <div>
+                <form class="d-flex input-group w-auto px-xxl-5" action="/" method="GET">
+                    <input type="search" class="form-control rounded" name="search" value="{{data.query}}"
+                        placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                    <span class="input-group-text text-white border-0" id="search-addon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </form>
+            </div>
+            <div class="d-flex align-items-center">
+                <a class="btn btn-dark px-3" href="https://github.com/mdbootstrap/mdb-ui-kit" role="button">
+                    <i class="fab fa-github fa-lg"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Search Bar Start -->
+
+    <!-- Search Bar End -->
+
+    <!-- Main Content Start -->
+    {% if data.totalRecords==-1%}
+    <!-- when no search query i.e home page -->
+    <div class="static-content">
+        <!-- url_for('static', filename='uploads/' + filename) -->
+        <img src="{{url_for('static',filename= 'img/' + 'img2.jpg')}}" width="100%" height="38%" />
+        <img src="{{url_for('static',filename= 'img/' + 'img3.webp')}}" width="100%" height="10%" />
+    </div>
+    {% else %}
+        <div class="header2">
+            <!-- Sort By Start -->
+            <form method="get" action="/" id="form-sortby">
+                <div class="row margin-left-0" style="padding: 10px 138px 10px 138px;">
+                    <div class="col-lg-8 col-md-8 col-xs-12">
+                        <span>{{data.totalRecords}} results for <b>"{{data.query}}"</b></span>
+                        <a class="color-b" href="{{data.original_url}}" target="_blank">View on Flipkart</a>
+                        <input type="hidden" value="{{data.query}}" name="search" />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-xs-12">
+                        <select class="pull-right" name="sortby" onchange="this.form.submit()">
+                            <option value="relevanceblender" {% if data.sortby=='relevanceblender' %}selected{% endif %}>
+                                Sort by: Featured</option>
+                            <option value="price-asc-rank" {% if data.sortby=='price-asc-rank' %}selected{% endif %}>Sort
+                                by: Price: Low to high</option>
+                            <option value="price-desc-rank" {% if data.sortby=='price-desc-rank' %}selected{% endif %}>Sort
+                                by: Price: High to low</option>
+                            <option value="review-rank" {% if data.sortby=='review-rank' %}selected{% endif %}>Sort by: Avg.
+                                Customer Review</option>
+                            <option value="date-desc-rank" {% if data.sortby=='date-desc-rank' %}selected{% endif %}>Sort
+                                by: Price: Newest Arrivals</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <!-- Sort By End -->
+        </div>
+        {% if data.totalRecords %}
+            <!-- when user searched and has data -->
+            <div class="container search-bar">
+                <div class="">
+                    {% for row in data.searchData %}
+                    <div class="row col-lg-12 raw-data" style="margin:0px"  >                    
+                        <div class="col-lg-3 col-md-3 col-xs-3" align="center">
+                            <img src="{{row[11]}}" height="100%" style="max-width:100%">
+                        </div>
+                        <div class="col-lg-9  col-md-9 col-xs-9" style="min-height: 180px;" >                            
+                            <h3>{{row[0]}}</h3>
+                            <span> 
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star"></span>
+                                <span class="fa fa-star"></span>
+                                {{row[2]}}
+                                <span class="price">{{row[3]}}</span>                        
+                                <span class="price">{{row[4]}}</span>                        
+                            </span>
+                            <br>
+                            <div style="display: flex; justify-content: end;">
+                                <button class="btn btn-primary"><sup>₹</sup>{{row[1]}}</button>
+                            </div>
+                            <ul>
+                                <li>{{row[5]}}</li>
+                                <li>{{row[6]}}</li>
+                                <li>{{row[7]}}</li>
+                                <li>{{row[8]}}</li>
+                                <li>{{row[9]}}</li>
+                                <li>{{row[10]}}</li>
+                            </ul>
+                        </div>                                                
+                    </div>    
+                    {% endfor %}                                                        
+                </div>                         
+                <center>
+                    <a class="color-b" href="{{url_for('static',filename='data/searchedData.csv')}}" target="_blank">Download data in CSV format</a>
+                    <h2>The END</h2>
+                </center>           
+            </div>  
+            {% else %}
+            <!-- no data found-->
+            <div style="margin:auto;" align="center">
+                <h4>No results for <u>{{data.query}}</u>.<br>
+                Try checking your spelling or use more general terms</h4>
+            </div>
+        {% endif %}
+    {% endif %} 
+    <!-- Maine Content End -->
+
+
+
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.1/mdb.min.js"></script>
+</body>
+
+</html>
